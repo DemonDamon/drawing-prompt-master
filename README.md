@@ -1,19 +1,29 @@
 # Drawing Prompt Master (绘画提示词大师) 🎨
 
-这是一个基于 Manus Skill 规范构建的绘画提示词专家库，专为 **Lovart.ai** 等支持多模态工作流的 AI 绘图平台优化。它不仅提供高质量的提示词模板，更核心的功能是通过**多轮交互**引导用户进行创意“冷启动”，并输出符合 **Text-to-Visual-Prompt Protocol** 的结构化导演级指令。
+这是一个基于 Manus Skill 规范构建的绘画提示词专家库，专为 **Lovart.ai** 等支持多模态智能体工作流的 AI 绘图平台优化。核心解决的问题是：**多角色同框时 AI 容易"编造"角色特征**。
 
 ## 🌟 核心特性
 
-- **Lovart.ai 智能体联动**: 引导用户配合使用 Lovart.ai 的“收集图片灵感”功能，通过真实参考图提升角色还原度。
-- **结构化输出规约**: 采用严格的 `[主题与布局设想] -> [视觉模块详解] -> [风格与配色方案] -> [技术参数建议]` 结构，确保 AI 绘图模型准确解析复杂画面。
-- **极简符号化写法**: 针对“全家福”等多角色同框场景，采用 `角色名 (特征1, 特征2)` 的极简写法，防止特征串位。
-- **多轮交互引导**: 支持从模糊意向到具体指令的渐进式构思。
+| 特性 | 说明 |
+|:---|:---|
+| **智能体搜图指令** | 提示词开头直接命令 Lovart.ai 智能体搜索并下载角色官方设定图到本地，作为严格参考，杜绝 AI 凭空编造 |
+| **结构化输出规约** | 采用 `[搜图指令] → [主题布局] → [视觉模块] → [风格配色] → [技术参数] → [英文直出Prompt]` 六段式模板 |
+| **极简符号化写法** | 多角色场景使用 `角色名 (特征1, 特征2)` 格式，防止特征串位 |
+| **多轮交互引导** | 支持从模糊意向到具体指令的渐进式冷启动构思 |
+
+## 🔑 为什么需要"智能体搜图指令"？
+
+当一张图包含 20+ 个动漫角色时，纯文字描述会导致 AI 模型"分散注意力"，后排小尺寸角色几乎全部被编造。**解决方案**是利用 Lovart.ai 本身作为智能体的能力，在提示词开头下达硬性指令：
+
+> **先去搜索引擎查找每个角色的官方设定图 → 下载到本地上下文 → 以此为严格参考再进行绘制**
+
+这样即使角色数量庞大，每个人的面部、服装、配色都能被精准还原。
 
 ## 📂 仓库结构
 
 ```text
 drawing-prompt-master/
-├── SKILL.md              # Skill 核心指令，包含多轮交互与输出规约
+├── SKILL.md              # Skill 核心指令（含智能体搜图指令模板）
 ├── references/
 │   ├── ip_characters.md  # 热门 IP 角色特征参考库
 │   └── style_library.md  # 绘画风格与视觉效果库
@@ -25,15 +35,24 @@ drawing-prompt-master/
 
 ### 在 Manus 中使用
 1. 将本仓库内容加载为 Manus Skill。
-2. 告诉 Manus 你的模糊想法（例如：“我想画一张包含 20 个动漫角色的全家福”）。
-3. 按照 Manus 的引导，逐步确定构图和风格，并在 Lovart.ai 中准备好**角色参考图 (Reference Images)**。
-4. 获取 Manus 输出的**结构化中文视觉描述**和**英文直出 Prompt**。
-5. 将英文 Prompt 复制到 Lovart.ai 中生成图片。
+2. 告诉 Manus 你的模糊想法（例如："我想画一张包含 20 个动漫角色的全家福"）。
+3. Manus 会通过多轮交互帮你确定构图和风格。
+4. 获取包含 **[AGENT ACTION REQUIRED]** 搜图指令的完整提示词。
+5. 将完整提示词复制到 Lovart.ai，智能体会自动执行搜图 → 下载 → 绘制的完整流程。
 
-### 交互示例
-> **用户**: 我想画个火影忍者的图，但不知道画什么。
->
-> **Manus**: 没问题！我们可以一起构思。首先，你希望画面是单人特写还是群像？另外，为了在 Lovart.ai 中获得最佳效果，建议你先使用它的**“收集图片灵感”**功能，找几张鸣人或佐助的官方设定图备用。你想尝试哪种风格？
+### 输出示例
+
+```text
+[AGENT ACTION REQUIRED]
+Before drawing, search the web, download, and use official character design images for:
+Gon Freecss, Killua Zoldyck, Naruto Uzumaki, Gojo Satoru...
+Use these downloaded images as strict references to prevent hallucination.
+
+[DRAWING PROMPT]
+Epic anime crossover group photo, 40+ iconic characters on a white brick plaza...
+Front center: Gon Freecss (spiky black hair, green jacket), Killua (white hair, purple shirt).
+...
+```
 
 ## 🤝 贡献指南
 欢迎提交 PR 来扩充 `references/` 下的角色库和风格库，让绘画创意更加丰富。
